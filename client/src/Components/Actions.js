@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from 'axios';
 
 const GET_CREATEDB = "GET_CRETEDB"; //creamos database
 const GET_ALL = "GET_ALL"; //obtenemos todos los datos
