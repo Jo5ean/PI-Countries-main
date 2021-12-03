@@ -2,9 +2,11 @@ import "./HomePage.css";
 import React from "react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAll } from "../../Components/Actions"
+import { getPage } from "../../Components/Actions"
 import { Link } from "react-router-dom";
-import  Card from "../../Components/Card"; 
+import  Cards from "../../Components/Cards";
+import { useParams } from "react-router";
+// import Paginado from "../../Components/Paginado"; 
 
 
 // Input de búsqueda para encontrar países por nombre
@@ -18,49 +20,94 @@ import  Card from "../../Components/Card";
 
 export default function Home() {
   const dispatch = useDispatch();
-  const allCountries = useSelector((state) => state.countries);
+
+  let { page: pg, sort: srt } = useParams();
+  let [page, setPage] = useState(parseInt(pg) || 1);
+  let [sort, setSort] = useState(`${srt}` || "AlphabeticAsc");
+  let countriesPage = useSelector((state) => state.countriesPage);
+  
+  let lastPage = 25; //ponemos esto por que sino hace 26 paginas y la ultima esta vacia
+
+
+  // const allCountries = useSelector((state) => state.countries);
+  // const [currentPage, setCurrentPage] = useState(1);
+  // const [countriesPerPage, setCountriesPerPage] = useState(10);
+  // const indexOfLastCountry = currentPage * countriesPerPage; //numero de la ultima carta
+  // const indexOfFirstCountry = indexOfLastCountry - countriesPerPage; //numero de la primera carta
+  // const currentCountries = allCountries.slice(indexOfFirstCountry, indexOfLastCountry); //paises de la pagina actual
+
+  // const paginado = (pageNumber) => {
+  //   setCurrentPage(pageNumber);
+  //   };
+
 
   useEffect(() => {
-    dispatch(getAll()); //map dispath to props
-  }, [dispatch]);
+    dispatch(getPage(page, sort)); //map dispath to props
+  }, [dispatch, page, sort]);
 
-  function handleClick(e) {
+  ////SETEAMOS EL BOTON DE SIGUIENTE PAGINA////
+  let [disable, setDisable] = useState({
+    next: false,
+    prev: false,
+  });
+
+  function nextPage(e) {
     e.preventDefault();
-    dispatch(getAll());
-  }
-  return (
-    <div className="home">
-      <Link to="/countries/all"> Crear Pais</Link>
-      <h1> COUNTRIES </h1>
-      <button onClick={e=> {handleClick(e)}}> 
-      Volver a Cargar Countries
-      </button>
+   if(page < lastPage){
+     setDisable({
+       ...disable,
+        next: false,
+      });
 
-      <div>
-        <select>
-          <option value="pobAsc" >Ascendente</option>
-          <option value="pobDesc">Descendente</option>
+    setPage(page + 1);
+   } else {
+      setDisable({
+        ...disable,
+        next: true,
+      });
+    }
+  }
+
+  ////SETEAMOS EL BOTON DE PAGINA PREVIA////
+
+  function prevPage(e) {
+    e.preventDefault();
+   if(page > 1){ //if(page > firstPage){
+     document.getElementById("next").disabled = false; //esto no se hace por default?? <------
+    setPage(page + 1);
+   } else {
+      document.getElementById("prev").disabled = true;
+    }
+  }
+  
+  function changeSort(e) {
+    e.preventDefault();
+    setSort(e.target.value);
+  }
+
+  return (
+    <div>
+      <div className="container">
+        <button className = "btn" id="prev" onClick={(e)=>prevPage(e)}>
+          <Link to={"/countries/"+ (page-1)}> {" < "} </Link>
+        </button>
+        <button className = "btn" id="next" onClick={(e)=>nextPage(e)}>
+          <Link to={"/countries/"+ (page+1)}> {" > "} </Link>
+        </button>
+        <select className="btn" onChange={(e)=>changeSort(e)}>
+          <option value="">Ordenar por:</option>
+          <option value="AlphabeticAsc">Orden Alfabetico ^ </option>
+          <option value="AlphabeticDesc">Orden Alfabetico v </option>
         </select>
-        <select>
-          <option value="region">Continente</option>
-          <option value="activity">Region</option>
-        </select>
-        <select>
-          <option value="All">Todos</option>
-          <option value="created">Creados</option>
-          <option value='api'>Existente</option>
-        </select>
-        {allCountries?.map((e) => {
-          return (
-            <fragment>
-            <Link to={"/home/" + e.id}>
-            <Card flag = {e.flag} name = {e.name} region = {e.region} key={e.id} />
-            </Link>
-            </fragment>
-          );
-          })}
-      </div>
+    </div>
+    <Cards
+      page={page}
+      sort={sort}
+      countries={countriesPage}
+      nextPage={nextPage}
+      prevPage={prevPage}
+      changeSort={changeSort}
+    />
     </div>
   );
 }
-

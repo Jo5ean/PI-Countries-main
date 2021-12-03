@@ -1,6 +1,7 @@
 let initialState = {
     countries : [],
-    country : []
+    country : {},
+    countriesPage : [],
 }
 
 const reducer = (state = initialState, action) => {
@@ -18,10 +19,16 @@ const reducer = (state = initialState, action) => {
         case 'GET_BY_NAME':
             return {
                 ...state,
+                country : action.payload //POSIBLE ERROR
+            }
+        case 'GET_PAGE':
+            return {
+                ...state,
                 countriesPage : action.payload
             }
         case 'GET_CREATEDB':
             return state;
+        
             
         default:
             return state
