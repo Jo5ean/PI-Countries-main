@@ -19,11 +19,12 @@ import { useParams } from "react-router";
 // Paginado para ir buscando y mostrando los siguientes paises, 10 paises por pagina, mostrando los primeros 9 en la primer pagina.
 
 export default function Home() {
-  const dispatch = useDispatch();
-
+  
   let { page: pg, sort: srt } = useParams();
-  let [page, setPage] = useState(parseInt(pg) || 1);
-  let [sort, setSort] = useState(`${srt}` || "AlphabeticAsc");
+  console.log(pg, srt);
+  let [page, setPage] = useState(pg?parseInt(pg) :1);
+  let [sort, setSort] = useState(srt?`${srt}`: "AlphabeticAsc");
+  const dispatch = useDispatch();
   let countriesPage = useSelector((state) => state.countriesPage);
   
   let lastPage = 25; //ponemos esto por que sino hace 26 paginas y la ultima esta vacia
@@ -47,8 +48,8 @@ export default function Home() {
 
   ////SETEAMOS EL BOTON DE SIGUIENTE PAGINA////
   let [disable, setDisable] = useState({
-    next: false,
-    prev: false,
+    next: !page===lastPage,
+    prev: !page===1,
   });
 
   function nextPage(e) {
@@ -57,6 +58,7 @@ export default function Home() {
      setDisable({
        ...disable,
         next: false,
+        prev: false,
       });
 
     setPage(page + 1);
@@ -73,10 +75,17 @@ export default function Home() {
   function prevPage(e) {
     e.preventDefault();
    if(page > 1){ //if(page > firstPage){
-     document.getElementById("next").disabled = false; //esto no se hace por default?? <------
-    setPage(page + 1);
+     setDisable({
+        ...disable,
+        prev: false,
+        next: false,
+      });
+      setPage(page - 1);
    } else {
-      document.getElementById("prev").disabled = true;
+      setDisable({
+        ...disable,
+        prev: true,
+      });
     }
   }
   
@@ -88,15 +97,16 @@ export default function Home() {
   return (
     <div>
       <div className="container">
-        <button className = "btn" id="prev" onClick={(e)=>prevPage(e)}>
-          <Link to={"/countries/"+ (page-1)}> {" < "} </Link>
+        <Link to="/search">Buscar</Link>
+        <button className = "btn" disabled={disable.prev} id="prev" onClick={(e)=>prevPage(e)}>
+          <Link disabled={disable.prev} to={"/countries/"+ (page-1)}> {" < "} </Link>
         </button>
-        <button className = "btn" id="next" onClick={(e)=>nextPage(e)}>
-          <Link to={"/countries/"+ (page+1)}> {" > "} </Link>
+        <button className = "btn" disabled={disable.next} id="next" onClick={(e)=>nextPage(e)}>
+          <Link disabled={disable.next} to={"/countries/"+ (page+1)}> {" > "} </Link>
         </button>
         <select className="btn" onChange={(e)=>changeSort(e)}>
           <option value="">Ordenar por:</option>
-          <option value="AlphabeticAsc">Orden Alfabetico ^ </option>
+          <option value="AlphabeticAsc">Orden Alfabetico ʌ </option>
           <option value="AlphabeticDesc">Orden Alfabetico v </option>
         </select>
     </div>

@@ -7,7 +7,7 @@ const Cards = (props) => {
   return (
     <div className="cards">
       {countries.map((c, index) => (
-        <Link key={index} to={`/country/$(c.id)`}>
+        <Link key={index} to={`/country/${c.id}`}>
           <Card
             className="card"
             name={c.name}

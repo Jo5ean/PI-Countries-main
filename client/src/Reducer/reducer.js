@@ -19,7 +19,7 @@ const reducer = (state = initialState, action) => {
         case 'GET_BY_NAME':
             return {
                 ...state,
-                country : action.payload //POSIBLE ERROR
+                countriesPage : action.payload //POSIBLE ERROR
             }
         case 'GET_PAGE':
             return {

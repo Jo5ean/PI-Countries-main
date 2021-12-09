@@ -2,6 +2,7 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getByName } from "./Actions";
 import { useEffect, useState } from "react";
+import Cards from "./Cards";
 
 const Search = () => {
   let countriesPage = useSelector((state) => state.countriesPage); // carga el array de paises por nombre
@@ -10,10 +11,7 @@ const Search = () => {
   countriesPage.map(
     //mapeo el array de paises traido del reducer
     //mapea segun un item, comprueba que exista la propiedad name y si existe mapea llenando el array con el nombre que busco por input (dato)
-    (item) =>
-      item.activities.length &&
-      item.activities.map((dato) => dato.name && actividad.push(dato.name))
-  );
+    (item) =>item.activities?.map((dato) => dato.name && actividad.push(dato.name)));
   const [filtro, setFiltro] = useState({ name: "", region: "", activity: "" });
   const dispatch = useDispatch();
 
@@ -50,7 +48,7 @@ const Search = () => {
           // className={select}
           onChange={(e) => setFiltro({ ...filtro, activity: e.target.value })}
         >
-          <option value="">Seleccionar actividad</option>
+          <option value="">ALL</option>
           {actividad.map((item, i) => (
             <option value={item} key={i}>
               {item}
@@ -58,6 +56,7 @@ const Search = () => {
           ))}
         </select>
       </div>
+      <Cards countries ={countriesPage} />
     </div>
   );
 };

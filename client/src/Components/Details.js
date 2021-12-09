@@ -26,7 +26,7 @@ const Details = () => {
     return (
         <div className="container">
             <div>
-                <img src={flag} alt="flag" width="100%" />
+                <img src={flag} alt="flag"/>
             </div>
             <div className="details">
                 {/* Utilizamos la etiqueta de hipertexto <p> para ordenar los parrafos */}
@@ -36,7 +36,6 @@ const Details = () => {
                 <p>Subregion: {subregion}</p>
                 <p>Capital: {capital}</p>
                 <p>Area: {area}[km^2]</p>
-                <p>Activities: {activities}</p>
             </div>
 
             <span>
